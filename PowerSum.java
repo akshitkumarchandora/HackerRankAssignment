@@ -6,51 +6,46 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-class Solution {
+public class Solution {
 
     // Complete the powerSum function below.
     static int powerSum(int X, int N) {
-        // Complete this function
-        int p = (int)nthroot(N,X);
-        int sum = rec(X,p,N);
-        return sum;
+
+        return solve(X,N);
     }
-    static int rec(int X,int p,int power){
-        if(X==0){
-            return 1;
-        }
-        if(X<0){
-            return 0;
-        }
-        if(p<0){
-            return 0;
-        }
-        
-        return rec(X,p-1,power)+rec(X-(int)Math.pow(p,power),p-1,power);
-    }
-    
-  public static double nthroot(int n, double x, double p) 
+
+    static int solve(int total,int N )
     {
-        if(x < 0) 
+        int num=(int)Math.pow(total,(double)1/N);
+        int []numbers=new int[num];//3
+        for(int i=0;i<num;i++)
+            numbers[i]=i+1;//0-1 1-2 2-3
+            //numbers=new int[]{3,1,2};
+        int [][]dpTable=new int[num+1][total+1];
+        for(int i=0;i<num+1;i++)
         {
-            System.err.println("Negative!");
-            return -1;
+            dpTable[i][0]=1;
         }
-        if(x == 0) 
-            return 0;
-        double x1 = x;
-        double x2 = x / n;  
-        while (Math.abs(x1 - x2) > p) 
+        for(int i=1;i<num+1;i++){
+            for(int j=1;j<total+1;j++){
+                
+                if((int)Math.pow(numbers[i-1],N)<=j)
+                dpTable[i][j]=dpTable[i-1][j]+dpTable[i-1][j-(int)Math.pow(numbers[i-1],N)];
+                else
+                dpTable[i][j]=dpTable[i-1][j];
+            }
+        }
+        for(int i=0;i<=num;i++)
+        {for(int j=0;j<=total;j++)
         {
-            x1 = x2;
-            x2 = ((n - 1.0) * x2 + x / Math.pow(x2, n - 1.0)) / n;
+            System.out.print(dpTable[i][j]+ "   ");
         }
-        return x2;
-    }
-    
-     public static double nthroot(int n, double x) 
-    {
-        return nthroot(n, x, .0001);
+        System.out.println();
+        }
+
+        System.out.println(Arrays.toString(numbers));
+        return dpTable[num][total];
+
     }
 
     private static final Scanner scanner = new Scanner(System.in);
